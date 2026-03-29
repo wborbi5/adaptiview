@@ -164,18 +164,14 @@ function OTPInput({ onComplete }: { onComplete: () => void }) {
 // ─── Main Login Page ───
 export default function HomePage() {
   const router = useRouter();
-  const [mfaDone, setMfaDone] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
-  const [showMfa, setShowMfa] = useState(false);
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) setShowMfa(true);
-  };
-
-  const handleMfaComplete = () => {
-    setMfaDone(true);
-    setTimeout(() => router.push('/onboard'), 800);
+    if (!email) return;
+    setLoading(true);
+    setTimeout(() => router.push('/onboard'), 600);
   };
 
   return (
@@ -221,48 +217,36 @@ export default function HomePage() {
             <p className="font-mono text-[10px] mt-1" style={{ color: '#3a5070' }}>Access your clinical intelligence dashboard</p>
           </div>
 
-          {!showMfa ? (
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <div>
-                <label className="font-mono text-[9px] tracking-[0.1em] uppercase block mb-1.5" style={{ color: '#3a5070' }}>Email / Site ID</label>
-                <input
-                  type="text"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="reviewer@sponsor.com"
-                  className="w-full px-4 py-3 font-mono text-[12px] outline-none"
-                  style={{ background: '#0C1728', border: '1px solid #1a2a45', color: '#e8ecf2', borderRadius: 0 }}
-                />
-              </div>
-              <div>
-                <label className="font-mono text-[9px] tracking-[0.1em] uppercase block mb-1.5" style={{ color: '#3a5070' }}>Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 font-mono text-[12px] outline-none"
-                  style={{ background: '#0C1728', border: '1px solid #1a2a45', color: '#e8ecf2', borderRadius: 0 }}
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-3 font-mono text-[11px] tracking-[0.15em] uppercase transition-opacity hover:opacity-80"
-                style={{ background: '#3D8EFF', color: '#fff', borderRadius: 0 }}
-              >
-                Continue
-              </button>
-            </form>
-          ) : (
-            <div className="space-y-4">
-              <div>
-                <p className="font-mono text-[10px] mb-1" style={{ color: '#e8ecf2' }}>Multi-factor authentication</p>
-                <p className="font-mono text-[9px]" style={{ color: '#3a5070' }}>Enter the 6-digit code from your authenticator</p>
-              </div>
-              <OTPInput onComplete={handleMfaComplete} />
-              {mfaDone && (
-                <p className="font-mono text-[10px] text-center animate-pulse" style={{ color: '#6adbbb' }}>Authenticated — loading dashboard…</p>
-              )}
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div>
+              <label className="font-mono text-[9px] tracking-[0.1em] uppercase block mb-1.5" style={{ color: '#3a5070' }}>Email / Site ID</label>
+              <input
+                type="text"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="reviewer@sponsor.com"
+                className="w-full px-4 py-3 font-mono text-[12px] outline-none"
+                style={{ background: '#0C1728', border: '1px solid #1a2a45', color: '#e8ecf2', borderRadius: 0 }}
+              />
             </div>
-          )}
+            <div>
+              <label className="font-mono text-[9px] tracking-[0.1em] uppercase block mb-1.5" style={{ color: '#3a5070' }}>Password</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                className="w-full px-4 py-3 font-mono text-[12px] outline-none"
+                style={{ background: '#0C1728', border: '1px solid #1a2a45', color: '#e8ecf2', borderRadius: 0 }}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 font-mono text-[11px] tracking-[0.15em] uppercase transition-opacity hover:opacity-80 disabled:opacity-60"
+              style={{ background: '#3D8EFF', color: '#fff', borderRadius: 0 }}
+            >
+              {loading ? 'Loading dashboard…' : 'Continue'}
+            </button>
+          </form>
 
           <p className="font-mono text-[8px] mt-8 text-center" style={{ color: '#253040' }}>
             Gaze tracking will calibrate on next screen · Camera access required
