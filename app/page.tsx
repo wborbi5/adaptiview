@@ -118,49 +118,6 @@ function MiniHeatmap() {
   );
 }
 
-// ─── MFA OTP Input ───
-function OTPInput({ onComplete }: { onComplete: () => void }) {
-  const [values, setValues] = useState(['', '', '', '', '', '']);
-  const inputs = useRef<(HTMLInputElement | null)[]>([]);
-
-  const handleChange = (index: number, val: string) => {
-    if (!/^\d*$/.test(val)) return;
-    const newVals = [...values];
-    newVals[index] = val.slice(-1);
-    setValues(newVals);
-    if (val && index < 5) {
-      inputs.current[index + 1]?.focus();
-    }
-    if (newVals.every(v => v !== '')) {
-      setTimeout(onComplete, 400);
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !values[index] && index > 0) {
-      inputs.current[index - 1]?.focus();
-    }
-  };
-
-  return (
-    <div className="flex gap-3 justify-center">
-      {values.map((v, i) => (
-        <input
-          key={i}
-          ref={el => { inputs.current[i] = el; }}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={v}
-          onChange={e => handleChange(i, e.target.value)}
-          onKeyDown={e => handleKeyDown(i, e)}
-          className="w-10 h-12 text-center text-lg font-mono bg-[#0C1728] border border-[#1a2a45] focus:border-[#3D8EFF] outline-none text-white"
-          style={{ borderRadius: 0 }}
-        />
-      ))}
-    </div>
-  );
-}
 // ─── Main Login Page ───
 export default function HomePage() {
   const router = useRouter();

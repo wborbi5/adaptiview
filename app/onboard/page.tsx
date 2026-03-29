@@ -12,6 +12,7 @@ import { AOIManager } from '@/lib/aoi-manager';
 import { mockDB } from '@/lib/mock-db';
 import { SOC_DATA } from '@/lib/clinical-data';
 import { Calibration } from '@/lib/calibration';
+import { useRouter } from 'next/navigation';
 
 const SESSION_DURATION = 60;
 const ROUND_DURATION = 30; // seconds per content round
@@ -101,6 +102,7 @@ const SPATIAL_ROUNDS = [
 ];
 
 export default function OnboardPage() {
+  const router = useRouter();
   const [stage, setStage] = useState<'waiting' | 'calibrating' | 'ready' | 'running' | 'done'>('waiting');
   const [faceReady, setFaceReady] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -440,6 +442,17 @@ export default function OnboardPage() {
         {stage === 'calibrating' && (
           <Calibration faceReady={faceReady} onComplete={handleCalibComplete} gazePos={gazePos} />
         )}
+
+        {/* Demo skip button */}
+        <div className="fixed bottom-6 right-6 z-[9999]">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="font-mono text-[11px] tracking-[0.08em] uppercase cursor-pointer"
+            style={{ padding: '8px 16px', background: 'rgba(12,23,40,0.9)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: 2 }}
+          >
+            Skip to Dashboard →
+          </button>
+        </div>
       </main>
     );
   }
@@ -459,11 +472,18 @@ export default function OnboardPage() {
           <h1 className="font-serif text-[28px] mb-2" style={{ color: 'var(--text)' }}>Ready to Begin</h1>
           <p className="text-[13px] mb-1" style={{ color: 'var(--text2)' }}>60-second session with all 3 content types displayed simultaneously.</p>
           <p className="text-[12px] mb-8" style={{ color: 'var(--text3)' }}>Look naturally at whatever interests you. We track which panel draws your gaze.</p>
-          <button onClick={startSession}
-            className="font-mono text-[12.5px] font-medium tracking-[0.1em] uppercase text-white cursor-pointer"
-            style={{ height: 48, padding: '0 32px', background: 'var(--navy)', border: 'none', borderRadius: 0 }}>
-            Start Session &rarr;
-          </button>
+          <div className="flex gap-3 justify-center">
+            <button onClick={startSession}
+              className="font-mono text-[12.5px] font-medium tracking-[0.1em] uppercase text-white cursor-pointer"
+              style={{ height: 48, padding: '0 32px', background: 'var(--navy)', border: 'none', borderRadius: 0 }}>
+              Start Session &rarr;
+            </button>
+            <button onClick={() => router.push('/dashboard')}
+              className="font-mono text-[11px] tracking-[0.08em] uppercase cursor-pointer"
+              style={{ height: 48, padding: '0 20px', background: 'transparent', border: '1px solid var(--border)', color: 'var(--text3)', borderRadius: 0 }}>
+              Skip to Dashboard
+            </button>
+          </div>
           <div className="mt-5 font-mono text-[10px]" style={{ color: 'var(--text3)' }}>
             Mode: {mode} &middot; Valid frames: {diagnostics.totalValid}
           </div>
@@ -799,6 +819,14 @@ export default function OnboardPage() {
               </div>
             )}
           </div>
+
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="w-full font-mono text-[12.5px] font-medium tracking-[0.1em] uppercase text-white cursor-pointer"
+            style={{ height: 48, background: 'var(--navy)', border: 'none', borderRadius: 0 }}
+          >
+            Continue to Dashboard &rarr;
+          </button>
         </div>
       )}
     </main>
