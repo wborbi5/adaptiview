@@ -1,27 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand / Background */
+  --navy:    #07101F;
+  --navy2:   #0C1728;
+  --navy3:   #122038;
+  --accent:  #3D8EFF;
+  --accent2: #00D4FF;
+  --teal:    #0FC9A0;
+  --amber:   #F59E0B;
+  --red:     #E03C3C;
+
+  /* Light surface (content area) */
+  --surface:  #F4F6FA;
+  --surface2: #EDF0F7;
+  --border:   #DDE2EC;
+  --white:    #FFFFFF;
+
+  /* Text */
+  --text:    #080F1D;
+  --text2:   #4A5568;
+  --text3:   #8A95A8;
+  --muted:   #8A95A8;
+
+  /* Layout */
+  --sidebar-w:         240px;
+  --sidebar-collapsed: 64px;
+
+  /* Adaptive variables — overridden at runtime by applyVisualConfig() */
+  --adapt-body-size:   13px;
+  --adapt-prose-size:  13px;
+  --adapt-line-height: 1.65;
+  --adapt-font-weight: 400;
+  --adapt-spacing:     20px;
+  --adapt-kpi-size:    32px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Tabular nums for all data */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* Prevent WebGazer overlays from disrupting layout */
+#webgazerVideoContainer {
+  position: fixed !important;
+  bottom: 12px !important;
+  right: 12px !important;
+  left: auto !important;
+  top: auto !important;
+  width: 120px !important;
+  height: 90px !important;
+  z-index: 9999 !important;
+  opacity: 0.4 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+}
+
+#webgazerVideoFeed,
+#webgazerVideoCanvas,
+#webgazerFaceOverlay,
+#webgazerFaceFeedbackBox {
+  width: 120px !important;
+  height: 90px !important;
+  position: fixed !important;
+  bottom: 12px !important;
+  right: 12px !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: 9999 !important;
+  opacity: 0.4 !important;
+  border-radius: 0 !important;
+  pointer-events: none !important;
+}
+
+#webgazerGazeDot {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Status pills */
+.status-active    { background: rgba(15,201,160,.1); color: #0AA880; border: 1px solid rgba(15,201,160,.25); border-radius: 2px; }
+.status-onhold    { background: rgba(245,158,11,.1);  color: #D97706; border: 1px solid rgba(245,158,11,.25);  border-radius: 2px; }
+.status-completed { background: rgba(138,149,168,.1); color: #6B7280; border: 1px solid rgba(138,149,168,.2);  border-radius: 2px; }
+.status-critical  { background: rgba(224,60,60,.1);   color: #E03C3C; border: 1px solid rgba(224,60,60,.2);   border-radius: 2px; }
+
+/* Grade badges */
+.grade-1 { background: rgba(15,201,160,.1);  color: #0AA880; border: 1px solid rgba(15,201,160,.25); border-radius: 2px; }
+.grade-2 { background: rgba(245,158,11,.1);  color: #D97706; border: 1px solid rgba(245,158,11,.25); border-radius: 2px; }
+.grade-3 { background: rgba(249,115,22,.1);  color: #EA580C; border: 1px solid rgba(249,115,22,.25); border-radius: 2px; }
+.grade-4 { background: rgba(224,60,60,.1);   color: #E03C3C; border: 1px solid rgba(224,60,60,.2);   border-radius: 2px; }
+.grade-5 { background: #7F1D1D;              color: white;   border: 1px solid #7F1D1D;              border-radius: 2px; }
+
+/* Stat card accent bars */
+.stat-bar-blue::before,
+.stat-bar-teal::before,
+.stat-bar-amber::before,
+.stat-bar-red::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.stat-bar-blue::before  { background: var(--accent); }
+.stat-bar-teal::before  { background: var(--teal); }
+.stat-bar-amber::before { background: var(--amber); }
+.stat-bar-red::before   { background: var(--red); }
+
+/* Slide-in animation for intervention alerts */
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.animate-slide-in { animation: slideIn 0.25s ease-out; }
+
+/* Fade-in stagger for cards */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.4s ease-out both; }
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+/* Adaptive typography & spacing */
+.prose-content {
+  font-size:   var(--adapt-prose-size);
+  line-height: var(--adapt-line-height);
+  font-weight: var(--adapt-font-weight);
+}
+.adaptive-section {
+  margin-bottom: var(--adapt-spacing);
+}
+.stat-val-adaptive {
+  font-family: 'DM Serif Display', serif;
+  font-size:   var(--adapt-kpi-size);
+  color:       var(--text);
+  line-height: 1;
 }
